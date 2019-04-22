@@ -112,6 +112,4 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 # Project Aliases
 
-alias ue='cd ~/Documents/Projects/unified-edge/'
-alias iot='cd ~/Documents/Projects/insite-app/IoTAgent/'
 alias rust='cd ~/Documents/Projects/Rust/'
