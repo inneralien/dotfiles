@@ -1,0 +1,17 @@
+➜  l ~/.vim/bundle
+total 0
+drwxr-xr-x  14 tjw1002  staff  448 Feb 26  2018 vim-snipmate/
+drwxr-xr-x   6 tjw1002  staff  192 Feb 26  2018 vim-ft-asciidoc/
+drwxr-xr-x   6 tjw1002  staff  192 Feb 26  2018 vim-addon-mw-utils/
+drwxr-xr-x   5 tjw1002  staff  160 Feb 26  2018 taglist.vim/
+drwxr-xr-x  12 tjw1002  staff  384 Feb 26  2018 vim-ledger/
+drwxr-xr-x   8 tjw1002  staff  256 Feb 26  2018 vim-git/
+drwxr-xr-x   7 tjw1002  staff  224 Feb 26  2018 vim-commentary/
+drwxr-xr-x  16 tjw1002  staff  512 Feb 26  2018 tlib_vim/
+drwxr-xr-x   7 tjw1002  staff  224 Feb 26  2018 nerdcommenter/
+drwxr-xr-x   4 tjw1002  staff  128 Feb 26  2018 indentpython.vim/
+drwxr-xr-x   7 tjw1002  staff  224 Feb 26  2018 TLA/
+drwxr-xr-x  18 tjw1002  staff  576 Feb 26  2018 vim-coffee-script/
+drwxr-xr-x  12 tjw1002  staff  384 Feb 26  2018 nerdtree/
+drwxr-xr-x  12 tjw1002  staff  384 Feb 26  2018 vim-swift/
+drwxr-xr-x  10 tjw1002  staff  320 Jan  8 06:52 ack.vim/

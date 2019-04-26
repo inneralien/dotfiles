@@ -1,0 +1,23 @@
+snippet nh
+	= `strftime('%B Lab Notes')`
+	:icons: font
+	:source-highlighter: pygments
+	Tim Weaver
+	`strftime("%Y/%m/%d")`
+
+snippet dh
+	== `strftime('%b %d, %Y [%A]')`
+
+snippet setup
+	==== Setup
+	[source,yaml]
+	----
+	Description: ${1:description}
+	Iterations: ${2:100}
+	TX Antenna: ${3:Center driven dipole w/groundplane}
+	RX Antenna: ${4:Center driven dipole w/groundplane}
+	SA Settings: 
+		- ${5:FA 3.0ghz;FB 5.8ghz;RB 30khz;VB 30khz;AT 10DB;LN;AUNITS W;RL 29.99e-6W;DET SMP;}
+	Sequence:
+		- ${6:0 mg/dL}
+	----
