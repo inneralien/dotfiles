@@ -2,12 +2,18 @@
  export PATH=$HOME/bin:/usr/local/bin:/usr/local/lib/ruby/gems/2.6.0/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/tjw1002/.oh-my-zsh
+export ZSH=$HOME/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME="spaceship"
+SPACESHIP_VI_MODE_SHOW=false
+SPACESHIP_PROMPT_ADD_NEWLINE=false
+SPACESHIP_VENV_SYMBOL="🐍 "
+SPACESHIP_PROMPT_ORDER=(venv git dir exec_time line_sep char)
+
+#ZSH_THEME="robbyrussell"
 #ZSH_THEME="amuse"
 
 # Set list of themes to load
@@ -60,20 +66,28 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
+  docker
+  docker-compose
   git
   vi-mode
   zsh-autosuggestions
   ssh-agent
-  virtualbox
+  #virtualbox
   #expand-aliases
   globalias
   #virtualenvwrapper
+  virtualenv
 )
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
-source $HOME/bin/virtualenv-autodetect.sh
+
+# Don't share command history between terminals
+#unsetopt inc_append_history
+#unsetopt share_history
+
+#source $HOME/bin/virtualenv-autodetect.sh
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -102,14 +116,44 @@ source $HOME/bin/virtualenv-autodetect.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias l='ls -ltrp'
+alias la='ls -altrp'
 alias v='vim'
 alias miniterm='miniterm.py --raw --eol=lf'
 alias mt='miniterm /dev/tty.usbserial 115200'
 alias javar='/Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java'
-alias gitl='git log --all --pretty --decorate --graph --oneline'
+# alias gitla='git log --all --pretty --graph --oneline'
+alias gitla='git log --invert-grep --grep="release/" --pretty --graph --oneline --all'
+alias gitl='git log --invert-grep --grep="release/" --pretty --graph --oneline'
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+# Disable shell integration because it doesn't work properly with TMux
+# test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # Project Aliases
 
 alias rust='cd ~/Documents/Projects/Rust/'
+
+alias updev='CURBRANCH=`git rev-parse --abbrev-ref HEAD`; git checkout develop; git pull origin develop; git checkout $CURBRANCH'
+alias rpkg='~/.dotnet/tools/paket restore; dotnet restore'
+alias uppkg='~/.dotnet/tools/paket update; dotnet restore'
+alias ipkg='~/.dotnet/tools/paket install; dotnet restore'
+alias b='dotnet build'
+alias bf21='dotnet build --framework netcoreapp2.1'
+alias nuke='cd src && git clean -xfd && cd .. && dotnet restore'
+alias paket='~/.dotnet/tools/paket'
+
+# AutoJump
+[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+
+# Fuzzy Find FTW!!
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Use Most pager for colors
+if command -v most > /dev/null 2>&1; then
+    export PAGER="most"
+fi
+
+# Bind Ctrl-space to accept Autosuggest 
+bindkey '^ ' autosuggest-accept
+
+# Auto activate Python VENVs
+source ~/bin/virtualenv-autodetect.sh

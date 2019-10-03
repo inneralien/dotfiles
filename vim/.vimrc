@@ -1,5 +1,29 @@
 :autocmd!
 
+" Plugins
+call plug#begin('~/.vim/bundle')
+
+Plug 'OmniSharp/omnisharp-vim'
+Plug 'lifepillar/vim-solarized8'
+Plug 'vim-syntastic/syntastic'
+Plug 'scrooloose/nerdtree'
+Plug 'SirVer/ultisnips'
+Plug 'tpope/vim-surround'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
+Plug 'airblade/vim-gitgutter'
+Plug 'chrisbra/unicode.vim'
+Plug 'tpope/vim-dispatch'
+" Plug 'honza/vim-snippets'
+" Plug 'Shougo/deoplete.nvim'
+" Plug 'roxma/nvim-yarp'
+" Plug 'roxma/vim-hug-neovim-rpc'
+
+call plug#end()
+
+let g:deoplete#enable_at_startup = 1
+
+
 if version >=700
     " Antialias fonts
 "    set nomacatsui anti enc=utf-8 termencoding=macroman gfn=Monaco:h12
@@ -20,9 +44,9 @@ endif
 "let &t_Co=256
 
 "Show white space type things visually.
-"set list
+set list
 "set listchars=tab:>.,trail:.,extends:#,nbsp:.
-
+set listchars=tab:➞\ ,extends:›,precedes:‹,nbsp:·,trail:•
 set ruler
 set nowrap
 
@@ -137,8 +161,11 @@ au BufRead *.vh set ts=4 sw=4 sta et sts=4 ai filetype=cpp
 " Tex and LaTeX
 au BufRead *.tex syn spell toplevel set spell spelllang=en_us
 
-"Make real tabs when editing a Makefile
-au BufEnter *akefile set ts=8 noet sts=0 sw=8
+"Make real tabs when editing a Makefiles and shell scripts
+au BufRead,BufEnter *.sh set ts=8 noet sts=0 sw=8
+
+"Make real tabs when editing a Makefiles and shell scripts
+au BufRead,BufEnter *akefile set ts=8 noet sts=0 sw=8
 au BufLeave *akefile set ts=8 et   sts=4 sw=4
 
 "Make real tabs when editing a Makefile
@@ -148,6 +175,13 @@ au BufLeave *.mak set ts=8 et   sts=4 sw=4
 "Same for tag files
 au BufEnter tags set ts=8 noet sts=0 sw=8
 au BufLeave tags set ts=8 et   sts=4 sw=4
+
+"CMake
+au BufRead CMakeLists.txt set filetype=cmake
+au BufRead CMakeCache.txt set filetype=cmake
+
+" c#
+au BufRead *.cs set ts=4 sw=4 sta et sts=4 ai
 
 "journal files have a fixed width
 au BufEnter *.j set tw=79
@@ -185,7 +219,7 @@ au BufEnter *.bpe set filetype=basic
 au BufEnter *.textile set filetype=textile lbr wrap
 
 " AsciiDoc
-autocmd BufRead,BufNewFile *.txt
+autocmd BufEnter,BufRead,BufNewFile *.adoc.txt
         \ setlocal ts=4 sw=4 sta et sts=4 ai lbr filetype=asciidoc
         \ formatoptions=tcqn
         \ formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\\|^\\s*<\\d\\+>\\s\\+\\\\|^\\s*[a-zA-Z.]\\.\\s\\+\\\\|^\\s*[ivxIVX]\\+\\.\\s\\+
@@ -199,7 +233,7 @@ au BufReadCmd *.love call zip#Browse(expand("<amatch>"))
 au BufRead,BufNewfile *.kit set filetype=yaml
 
 syntax enable
-"hi      SpecialKey  ctermfg=DarkRed	                        guifg=DarkRed
+"hi      SpecialKey  ctermfg=gray ctermbg=black guifg=DarkRed
 "hi      Directory   ctermfg=Brown	                        guifg=Brown
 "hi      Comment	    ctermfg=darkgreen	                    guifg=darkgreen
 "hi      PreProc	    ctermfg=Brown		                    guifg=Brown
@@ -210,15 +244,16 @@ syntax enable
 "hi      CursorLine  ctermfg=darkgrey    ctermbg=lightcyan	guibg=Gray12
 "hi      CursorColumn ctermfg=Yellow     ctermbg=Yellow	    guibg=Yellow
 
-map <F2> o<CR>Entry Time:<Esc>:r!date +\%T<CR>kJo
+"map <F2> o<CR>Entry Time:<Esc>:r!date +\%T<CR>kJo
 "map <F3> <Esc>kzz0<S-v>
 "map <F4> <Esc>jzz0<S-v>
 
-map <F5> O#==============================================================================<Esc>
-"map <F6> O/*==========================================================================*/<Esc>
-"map <F5> !boxes -d shell<CR>
+map <F5> :SyntasticCheck<CR>
 map <F7> :set hlsearch <CR>
 map <F8> :set nohlsearch <CR>
+
+" Surround word with backticks ``
+map <Leader>` ysW`
 
 "colorscheme slate
 "Map ^T to start aspell on the file
@@ -226,10 +261,10 @@ map <F8> :set nohlsearch <CR>
 
 " Fill the screen vertically
 "set columns=80
-execute pathogen#infect()
-syntax on
-filetype on
-filetype plugin indent on
+
+"syntax on
+"filetype on
+"filetype plugin indent on
 
 "function! SuperCleverTab()
 "    if strpart(getline('.'), 0, col('.') - 1) =~ '^\s*$'
@@ -264,7 +299,7 @@ set complete=.,w,b,u,t
 map <C-n> :NERDTreeToggle<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-call togglebg#map("<F6>")
+"call togglebg#map("<F6>")
 
 " Silver Searcher
 "let g:ackprg = 'ag --nogroup --nocolor --column'
@@ -274,16 +309,22 @@ let g:ackprg = 'ag --vimgrep'
 "Turn off the toolbar
 set guioptions-=T
 
-"let g:solarized_termcolors=256
 "let g:solarized_contrast="high"
 "set transparency=5
 "colorscheme blackboard
 set background=dark
+let g:solarized_termcolors=256
 let g:solarized_visibility = "high"
 let g:solarized_contrast = "high"
 let g:solarized_termtrans = 1
 
-colorscheme solarized
+augroup MyColors
+    autocmd!
+"    autocmd ColorScheme * highlight SpecialKey term=bold cterm=italic ctermfg=242 gui=italic guifg=#586e75
+"    autocmd ColorScheme * highlight SpecialKey term=bold  cterm=none ctermfg=242 gui=italic guifg=#586e75
+    autocmd ColorScheme * highlight SpecialKey term=bold cterm=none
+augroup END
+colorscheme solarized8
 
 
 " Make comments italic
@@ -294,3 +335,52 @@ highlight MatchParen cterm=bold ctermbg=none ctermfg=red
 
 "colorscheme slate
 
+" Syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+
+" OmniSharp
+"let g:syntastic_cs_checkers = ['code_checker']
+
+let g:OmniSharp_server_stdio = 1
+let g:OmniSharp_timeout = 5
+set completeopt=longest,menuone,preview
+set previewheight=5
+let g:OmniSharp_highlight_types = 2
+
+augroup omnisharp_commands
+    autocmd!
+
+    " Show type information automatically when the cursor stops moving
+    autocmd CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
+
+    " The following commands are contextual, based on the cursor position.
+    autocmd FileType cs nnoremap <buffer> gd :OmniSharpGotoDefinition<CR>
+    autocmd FileType cs nnoremap <buffer> <Leader>fi :OmniSharpFindImplementations<CR>
+    autocmd FileType cs nnoremap <buffer> <Leader>fs :OmniSharpFindSymbol<CR>
+    autocmd FileType cs nnoremap <buffer> <Leader>fu :OmniSharpFindUsages<CR>
+
+    " Finds members in the current buffer
+    autocmd FileType cs nnoremap <buffer> <Leader>fm :OmniSharpFindMembers<CR>
+
+    autocmd FileType cs nnoremap <buffer> <Leader>fx :OmniSharpFixUsings<CR>
+    autocmd FileType cs nnoremap <buffer> <Leader>tt :OmniSharpTypeLookup<CR>
+    autocmd FileType cs nnoremap <buffer> <Leader>dc :OmniSharpDocumentation<CR>
+    autocmd FileType cs nnoremap <buffer> <C-\> :OmniSharpSignatureHelp<CR>
+    autocmd FileType cs inoremap <buffer> <C-\> <C-o>:OmniSharpSignatureHelp<CR>
+
+    " Navigate up and down by method/property/field
+    autocmd FileType cs nnoremap <buffer> <C-k> :OmniSharpNavigateUp<CR>
+    autocmd FileType cs nnoremap <buffer> <C-j> :OmniSharpNavigateDown<CR>
+
+    " Find all code errors/warnings for the current solution and populate the quickfix window
+    autocmd FileType cs nnoremap <buffer> <Leader>cc :OmniSharpGlobalCodeCheck<CR>
+augroup END
+
+"hi      SpecialKey  ctermfg=gray ctermbg=black guifg=DarkRed
