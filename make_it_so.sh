@@ -64,6 +64,9 @@ function install_zsh
 {
 	echo "Installing ZSH"
 	if [[ $PM == "yum" ]]; then sudo yum install zsh; fi
+
+	echo "Install util-linux-user tools so we can change the shell"
+	sudo yum install util-linux-user
 }
 
 # Oh-my-ZSH
@@ -104,11 +107,23 @@ function install_spaceship_theme
 
 
 # FZF -- Fuzzy Finder
+function install_fzf {
+	if [[ ! -d $HOME/.fzf ]]; then
+		pushd $HOME
+		git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.fzf
+		popd
+	else
+		update $HOME/.fzf
+	fi
+
+	# Run installer everytime since the zsh file is overwritten
+	~/.fzf/install --all
+}
 
 # The Silver Searcher
 
 # Tmux
 
-install_vim_files || die "Can't install VIM files"
+#install_vim_files || die "Can't install VIM files"
 #install_zsh && install_ohmyzsh && install_spaceship_theme || die "Can't install ZSH"
-install_spaceship_theme || die "Can't install spaceship theme"
+install_fzf || die "Can't install FZF"
