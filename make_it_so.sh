@@ -31,6 +31,7 @@ function update
     fi
 }
 
+
 # Figure out which OS we might be on based on the package manager
 if [[ -f /usr/bin/apt-get ]]; then
     PM="apt-get"
@@ -45,8 +46,10 @@ else
     PM="UNKNOWN"
 fi
 
+
 # Update bin/ dir
 rsync -azP bin/ $HOME/bin/
+
 
 # VIM
 function install_vim_files
@@ -59,6 +62,7 @@ function install_vim_files
 	fi
 }
 
+
 # ZSH
 function install_zsh
 {
@@ -66,8 +70,9 @@ function install_zsh
 	if [[ $PM == "yum" ]]; then sudo yum install zsh; fi
 
 	echo "Install util-linux-user tools so we can change the shell"
-	sudo yum install util-linux-user
+	if [[ $PM == "yum" ]]; then sudo yum install util-linux-user; fi
 }
+
 
 # Oh-my-ZSH
 function install_ohmyzsh
@@ -120,10 +125,15 @@ function install_fzf {
 	~/.fzf/install --all
 }
 
+
 # The Silver Searcher
+function install_ag {
+	if [[ $PM == "yum" ]]; then sudo yum install the_silver_searcher; fi
+}
 
 # Tmux
 
-#install_vim_files || die "Can't install VIM files"
-#install_zsh && install_ohmyzsh && install_spaceship_theme || die "Can't install ZSH"
+install_vim_files || die "Can't install VIM files"
+install_zsh && install_ohmyzsh && install_spaceship_theme || die "Can't install ZSH"
 install_fzf || die "Can't install FZF"
+install_ag || die "Can't install The Silver Searcher"
