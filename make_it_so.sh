@@ -69,8 +69,10 @@ function install_zsh
 	echo "Installing ZSH"
 	if [[ $PM == "yum" ]]; then sudo yum install zsh; fi
 
-	echo "Install util-linux-user tools so we can change the shell"
-	if [[ $PM == "yum" ]]; then sudo yum install util-linux-user; fi
+	if [[ ! -x $(command -v chsh) ]]; then
+		echo "Install util-linux-user tools so we can change the shell"
+		if [[ $PM == "yum" ]]; then sudo yum install util-linux-user; fi
+	fi
 }
 
 
