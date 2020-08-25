@@ -1,33 +1,101 @@
 :autocmd!
 
 " Plugins
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-                autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-                        endif
-
 call plug#begin('~/.vim/bundle')
 
 Plug 'OmniSharp/omnisharp-vim'
 Plug 'lifepillar/vim-solarized8'
+Plug 'ayu-theme/ayu-vim'
 Plug 'vim-syntastic/syntastic'
 Plug 'scrooloose/nerdtree'
 Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'chrisbra/unicode.vim'
 Plug 'tpope/vim-dispatch'
-" Plug 'honza/vim-snippets'
-" Plug 'Shougo/deoplete.nvim'
-" Plug 'roxma/nvim-yarp'
-" Plug 'roxma/vim-hug-neovim-rpc'
+Plug 'armyofevilrobots/vim-openscad'
+" Rust Plugins
+Plug 'rust-lang/rust.vim'
+" Racer
+"Plug 'racer-rust/vim-racer'
+" or LSP
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+
+"if has('nvim')
+"    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+"else
+"    Plug 'Shougo/deoplete.nvim'
+"    Plug 'msgpack/msgpack-python'
+"    Plug 'roxma/nvim-yarp'
+"    Plug 'roxma/vim-hug-neovim-rpc'
+"endif
+
 
 call plug#end()
 
-let g:deoplete#enable_at_startup = 1
+" UltiSnips Trigger configuration
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+"let g:deoplete#enable_at_startup = 2
+
+"" RACER
+"let g:racer_cmd = "/Users/tweaver/.cargo/bin/racer"
+""let g:racer_experimental_completer = 1
+""let g:racer_insert_paren = 1
+"au FileType rust nmap gd <Plug>(rust-def)
+"au FileType rust nmap gs <Plug>(rust-def-split)
+"au FileType rust nmap gx <Plug>(rust-def-vertical)
+"au FileType rust nmap <leader>gd <Plug>(rust-doc)
+
+" Use LSP instead of RACER
+" Rust Language Server for LSP
+if executable('rls')
+        au User lsp_setup call lsp#register_server({
+                \ 'name': 'rls',
+                \ 'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
+                \ 'workspace_config': {'rust': {'clippy_preference': 'on'}},
+                \ 'whitelist': ['rust'],
+                \ })
+endif
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> <f2> <plug>(lsp-rename)
+    " refer to doc to add more commands
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+let g:lsp_highlight_references_enabled = 0
+let g:lsp_diagnostics_echo_cursor = 1
+let g:lsp_diagnostics_enabled = 1
+"let g:lsp_signs_error = {'text': '🦀'}
+let g:lsp_signs_error = {'text': '✘ '}
+let g:lsp_signs_warning = {'text': 'W>'}
+let g:lsp_signs_information = {'text': 'I>'}
+let g:lsp_signs_hint = {'text': 'H>'}
+
+" Aut"omatically start language servers.
+"let "g:LanguageClient_autoStart = 1
+     "
+" Map"s K to hover, gd to goto definition, F2 to rename
+"nnor"emap <silent> K :call LanguageClient_textDocument_hover()
+"nnoremap <silent> gd :call LanguageClient_textDocument_definition()
 
 
 if version >=700
@@ -230,6 +298,7 @@ autocmd BufEnter,BufRead,BufNewFile *.adoc.txt
         \ formatoptions=tcqn
         \ formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\\|^\\s*<\\d\\+>\\s\\+\\\\|^\\s*[a-zA-Z.]\\.\\s\\+\\\\|^\\s*[ivxIVX]\\+\\.\\s\\+
         \ comments=s1:/*,ex:*/,://,b:#,:%,:XCOMM,fb:-,fb:*,fb:+,fb:.,fb:>
+        \ nonu norelativenumber
 " au BufEnter *.adoc set filetype=asciidoc  lbr wrap
 " au BufEnter *.adoc.txt set filetype=asciidoc  lbr wrap
 
@@ -270,7 +339,7 @@ map <Leader>` ysW`
 
 "syntax on
 "filetype on
-"filetype plugin indent on
+filetype plugin indent on
 
 "function! SuperCleverTab()
 "    if strpart(getline('.'), 0, col('.') - 1) =~ '^\s*$'
@@ -297,6 +366,12 @@ nnoremap <leader>sv :source $MYVIMRC<cr> :echo "sourced" $MYVIMRC<cr>
 
 set textwidth=79
 set lbr
+" Enable line numbers
+set nu
+" Make the line number be relative to the cursor
+set relativenumber
+" Put the sign in the same column as the line number
+"set signcolumn=number
 
 " Don't let CTRL-n search through included files. Takes too long
 " set complete=.,w,b,u,t,i <-- remove the i
@@ -318,6 +393,8 @@ set guioptions-=T
 "let g:solarized_contrast="high"
 "set transparency=5
 "colorscheme blackboard
+
+" Solarized Colors
 set background=dark
 let g:solarized_termcolors=256
 let g:solarized_visibility = "high"
@@ -332,6 +409,12 @@ augroup MyColors
 augroup END
 colorscheme solarized8
 
+" Ayu Colors
+"set termguicolors     " enable true colors support
+""let ayucolor="light"  " for light version of theme
+"let ayucolor="mirage" " for mirage version of theme
+"let ayucolor="dark"   " for dark version of theme
+"colorscheme ayu
 
 " Make comments italic
 let &t_ZH="\e[3m"
@@ -342,12 +425,17 @@ highlight MatchParen cterm=bold ctermbg=none ctermfg=red
 "colorscheme slate
 
 " Syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+"let g:syntastic_error_symbol = "✗"
+"let g:syntastic_warning_symbol = "⚠"
+"highlight SyntasticError guibg=#FF7033
+"highlight SyntasticStyleWarning guibg=#3CDEBB
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 0
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 
