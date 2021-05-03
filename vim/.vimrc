@@ -17,13 +17,14 @@ Plug 'airblade/vim-gitgutter'
 Plug 'chrisbra/unicode.vim'
 Plug 'tpope/vim-dispatch'
 Plug 'armyofevilrobots/vim-openscad'
-" Rust Plugins
+" Rust Things
 Plug 'rust-lang/rust.vim'
+Plug 'cespare/vim-toml'
 " Racer
 "Plug 'racer-rust/vim-racer'
 " or LSP
-Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
+"Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 
@@ -70,8 +71,21 @@ endif
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
     setlocal signcolumn=yes
-    nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> <f2> <plug>(lsp-rename)
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <Plug>(lsp-definition)
+    nmap <buffer> gs <Plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+
     " refer to doc to add more commands
 endfunction
 
@@ -90,11 +104,19 @@ let g:lsp_signs_warning = {'text': 'W>'}
 let g:lsp_signs_information = {'text': 'I>'}
 let g:lsp_signs_hint = {'text': 'H>'}
 
-" Aut"omatically start language servers.
-"let "g:LanguageClient_autoStart = 1
-     "
+" Enable logging to figure out LSP issues
+let g:lsp_log_verbose = 1
+let g:lsp_log_file = expand('~/vim-lsp.log')
+
+" for asyncomplete.vim log
+"let g:asyncomplete_log_file = expand('~/asyncomplete.log')
+
+"au CursorHold *.rs :LspHover<CR> set updatetime 1000
+
+" Automatically start language servers.
+"let g:LanguageClient_autoStart = 1
 " Map"s K to hover, gd to goto definition, F2 to rename
-"nnor"emap <silent> K :call LanguageClient_textDocument_hover()
+"nnoremap <silent> K :call LspHover<CR>
 "nnoremap <silent> gd :call LanguageClient_textDocument_definition()
 
 
@@ -478,3 +500,15 @@ augroup omnisharp_commands
 augroup END
 
 "hi      SpecialKey  ctermfg=gray ctermbg=black guifg=DarkRed
+
+" auto paste mode
+let &t_SI .= "\<Esc>[?2004h"
+let &t_EI .= "\<Esc>[?2004l"
+
+inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
+
+function! XTermPasteBegin()
+  set pastetoggle=<Esc>[201~
+  set paste
+  return ""
+endfunction
