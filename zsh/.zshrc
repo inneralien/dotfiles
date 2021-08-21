@@ -1,5 +1,7 @@
 # If you come from bash you might have to change your $PATH.
- export PATH=$HOME/bin:/usr/local/bin:/usr/local/lib/ruby/gems/2.6.0/bin:$PATH
+export GOPATH=$HOME/go
+export GOBIN=$HOME/go/bin
+export PATH=$HOME/bin:/usr/local/bin:/usr/local/lib/ruby/gems/2.6.0/bin:$GOBIN:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
@@ -10,8 +12,28 @@ export ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="spaceship"
 SPACESHIP_VI_MODE_SHOW=false
 SPACESHIP_PROMPT_ADD_NEWLINE=false
+SPACESHIP_HOST_SHOW=true
+SPACESHIP_HOST_SHOW_FULL=true
 SPACESHIP_VENV_SYMBOL="🐍 "
-SPACESHIP_PROMPT_ORDER=(venv git dir exec_time line_sep char)
+SPACESHIP_VENV_GENERIC_NAMES="()"
+#SPACESHIP_PROMPT_FIRST_PREFIX_SHOW=true
+#SPACESHIP_PROMPT_PREFIXES_SHOW=true
+#SPACESHIP_PROMPT_DEFAULT_PREFIX="╭─"
+#SPACESHIP_PROMPT_DEFAULT_SUFFIX="╭─"
+#SPACESHIP_CHAR_COLOR_SUCCESS=""
+#SPACESHIP_DIR_TRUNC=3
+SPACESHIP_DIR_TRUNC_PREFIX="…/"
+SPACESHIP_DIR_PREFIX="╭─○ "
+#SPACESHIP_DIR_PREFIX="╭∊ "
+#SPACESHIP_DIR_PREFIX="╭🍄 "
+#SPACESHIP_DIR_PREFIX=" "
+SPACESHIP_CHAR_PREFIX="╰─"
+#SPACESHIP_CHAR_SYMBOL="○ "
+SPACESHIP_CHAR_SYMBOL="𝝨 "
+#SPACESHIP_CHAR_SYMBOL="𝝣 "
+#SPACESHIP_CHAR_SYMBOL="→ "
+SPACESHIP_RUST_SHOW=true
+SPACESHIP_PROMPT_ORDER=(host dir venv git exec_time line_sep char)
 
 #ZSH_THEME="robbyrussell"
 #ZSH_THEME="amuse"
@@ -66,6 +88,7 @@ SPACESHIP_PROMPT_ORDER=(venv git dir exec_time line_sep char)
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
+  cargo
   docker
   docker-compose
   git
@@ -122,15 +145,13 @@ alias miniterm='miniterm.py --raw --eol=lf'
 alias mt='miniterm /dev/tty.usbserial 115200'
 alias javar='/Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java'
 # alias gitla='git log --all --pretty --graph --oneline'
-alias gitla='git log --invert-grep --grep="release/" --pretty --graph --oneline --all'
-alias gitl='git log --invert-grep --grep="release/" --pretty --graph --oneline'
+alias gitla='git log --pretty --graph --oneline --all'
+alias gitl='git log --pretty --graph --oneline'
 
 # Disable shell integration because it doesn't work properly with TMux
 # test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # Project Aliases
-
-alias rust='cd ~/Documents/Projects/Rust/'
 
 alias updev='CURBRANCH=`git rev-parse --abbrev-ref HEAD`; git checkout develop; git pull origin develop; git checkout $CURBRANCH'
 alias rpkg='~/.dotnet/tools/paket restore; dotnet restore'
@@ -148,12 +169,19 @@ alias paket='~/.dotnet/tools/paket'
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Use Most pager for colors
-if command -v most > /dev/null 2>&1; then
-    export PAGER="most"
-fi
+#if command -v most > /dev/null 2>&1; then
+#    export PAGER="most"
+#fi
 
 # Bind Ctrl-space to accept Autosuggest 
 bindkey '^ ' autosuggest-accept
 
 # Auto activate Python VENVs
-source ~/bin/virtualenv-autodetect.sh
+if [[ -x ~/bin/virtualenv-autodetect.sh ]]; then
+    source ~/bin/virtualenv-autodetect.sh
+fi
+
+# Pyenv
+if [[ -x /usr/local/bin/pyenv ]]; then
+    eval "$(pyenv init -)"
+fi
