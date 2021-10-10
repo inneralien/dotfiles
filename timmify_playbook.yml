@@ -1,0 +1,134 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Update and upgrade
+      apt:
+        upgrade: yes
+
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install Build Tools
+      apt:
+        name: build-essential
+        state: latest
+
+    - name: Install ZSH
+      apt:
+        name: zsh
+        state: latest
+
+    - name: Install full featured VIm
+      apt:
+        name: vim-nox
+        state: latest
+        update_cache: yes
+        force_apt_get: yes
+
+    - name: Install The Silver Searcher
+      apt:
+        name: silversearcher-ag
+        state: latest
+        update_cache: yes
+        force_apt_get: yes
+
+    - name: Nodejs, neede for VIM COC
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'nodejs', 'yarn' ]
+
+    - name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+    - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common' ]
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt: update_cache=yes name=docker-ce state=latest
+
+    - name: Add user to groups
+      user:
+        name: vagrant
+        groups: docker
+
+
+# User centric installs
+- hosts: all
+  become: yes
+  become_user: vagrant
+  tasks:
+    - name: Install Oh-My-ZSH
+      shell:
+        cmd: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+        creates: ~/.oh-my-zsh
+
+    - name: Install Spaceship for Oh-My-ZSH
+      shell:
+        cmd: git clone https://github.com/spaceship-prompt/spaceship-prompt.git ~/.oh-my-zsh/themes/spaceship-prompt --depth=1 && ln -s ~/.oh-my-zsh/themes/spaceship-prompt/spaceship.zsh-theme ~/.oh-my-zsh/themes/spaceship.zsh-theme
+        creates: ~/.oh-my-zsh/themes/spaceship.zsh-theme
+
+    - name: Copy local .zshrc
+      copy:
+        force: yes
+        src: ~/.zshrc
+        dest: ~/.zshrc
+
+    - name: Install Rust
+      expect:
+        command: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        creates: ~/.cargo
+        echo: yes
+        responses:
+          1) Proceed with installation (default): 1
+
+    - name: Install Rust components
+      shell:
+        cmd: rustup component add rls rust-analysis rust-src
+
+    - name: Copy .vimrc
+      copy:
+        force: yes
+        src: ~/.vimrc
+        dest: ~/.vimrc
+
+    - name: Install VIM Plug
+      shell:
+        cmd: curl -fLo ~/.vim/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+    - name: Install VIM plugins
+      shell:
+        cmd: vim -c -u ~/.vimrc +PlugInstall +qall
+
+          #    - name: Install Coc for VIM
+          #      shell:
+          #        cmd: vim -c CocInstall coc-rls
+
+- hosts: all
+  become: no
+  tasks:
+    - name: Add ls alias
+      lineinfile:
+        path: ~/.bash_aliases
+        line: alias l='ls -ltrp'
+        create: yes
+    - name: Add vim alias
+      lineinfile:
+        path: ~/.bash_aliases
+        line: alias v='vim'
+        create: yes
+    - name: Set vi
+      lineinfile:
+        path: ~/.bash_aliases
+        line: set -o vi
+        create: yes
