@@ -137,7 +137,7 @@ function install_ag {
 
 # Tmux
 
-install_vim_files || die "Can't install VIM files"
-install_zsh && install_ohmyzsh && install_spaceship_theme || die "Can't install ZSH"
+#install_vim_files || die "Can't install VIM files"
+#install_zsh && install_ohmyzsh && install_spaceship_theme || die "Can't install ZSH"
 install_fzf || die "Can't install FZF"
-install_ag || die "Can't install The Silver Searcher"
+#install_ag || die "Can't install The Silver Searcher"

@@ -1,3 +1,5 @@
+OS=`uname -s`
+
 # If you come from bash you might have to change your $PATH.
 export GOPATH=$HOME/go
 export GOBIN=$HOME/go/bin
@@ -163,7 +165,12 @@ alias nuke='cd src && git clean -xfd && cd .. && dotnet restore'
 alias paket='~/.dotnet/tools/paket'
 
 # AutoJump
-[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+if [ "$OS" = "Darwin" ]; then
+    [ -f /opt/homebrew/etc/profile.d/autojump.sh ] && . /opt/homebrew/etc/profile.d/autojump.sh
+else
+    [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+fi
+
 
 # Fuzzy Find FTW!!
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  tags: basic
+  tags: [ basic, macos ]
   become: no
   tasks:
     - name: Add ls alias
@@ -111,6 +111,7 @@
 
 # User centric installs
 - hosts: all
+  tags: zsh
   become: no
   tasks:
     - name: Install Oh-My-ZSH
@@ -124,6 +125,10 @@
         creates: ~/.oh-my-zsh/themes/spaceship.zsh-theme
 
 
+- hosts: all
+  tags: rust
+  become: no
+  tasks:
     - name: Install Rust
       expect:
         command: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
