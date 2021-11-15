@@ -1,0 +1,24 @@
+[user]
+    name = Tim Weaver
+    email = inneralien@protonmail.com
+[alias]
+    st = status
+    ci = commit
+    co = checkout
+[core]
+    excludesfile = /Users/tweaver/.gitignore_global
+    autocrlf = input
+[color]
+    diff = auto
+    status = auto
+    branch = auto
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+[fetch]
+    all = true
+    prune = true
+[pull]
+    ff = only
