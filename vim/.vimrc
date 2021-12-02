@@ -71,7 +71,7 @@ set shortmess+=c
 " diagnostics appear/become resolved.
 if has("nvim-0.5.0") || has("patch-8.1.1564")
   " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
+  set signcolumn=auto
 else
   set signcolumn=yes
 endif
@@ -516,6 +516,9 @@ map <F8> :set nohlsearch <CR>
 " Surround word with backticks ``
 map <Leader>` ysW`
 
+" Remove trailing whitespace
+map <Leader>rw :%s/\s\+$//e<Cr>
+
 "colorscheme slate
 "Map ^T to start aspell on the file
 "map  :w!<CR>:!aspell check %<CR>:e! %<CR>
@@ -596,7 +599,7 @@ augroup MyColors
     autocmd ColorScheme * highlight rustCommentLineDoc ctermfg=242 cterm=italic
     autocmd ColorScheme * highlight rustCommentBlockDoc ctermfg=242 cterm=italic
 augroup END
-colorscheme solarized8
+silent! colorscheme solarized8
 
 " Ayu Colors
 "set termguicolors     " enable true colors support

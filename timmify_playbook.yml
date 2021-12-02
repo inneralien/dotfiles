@@ -1,18 +1,64 @@
 ---
 - hosts: all
+  tags: [ basic, macos ]
+  become: no
+  tasks:
+    - name: Add ls alias
+      lineinfile:
+        path: ~/.bash_aliases
+        line: alias l='ls -ltrp'
+        create: yes
+
+    - name: Add vim alias
+      lineinfile:
+        path: ~/.bash_aliases
+        line: alias v='vim'
+        create: yes
+
+    - name: Set vi
+      lineinfile:
+        path: ~/.bash_aliases
+        line: set -o vi
+        create: yes
+
+    - name: Copy local .zshrc
+      copy:
+        force: yes
+        src: zsh/.zshrc
+        dest: ~/.zshrc
+
+    - name: Copy tmux.conf
+      copy:
+        force: yes
+        src: tmux/.tmux.conf
+        dest: ~/.tmux.conf
+
+    - name: Copy .vimrc
+      copy:
+        force: yes
+        src: vim/.vimrc
+        dest: ~/.vimrc
+
+    - name: Install VIM Plug
+      shell:
+        cmd: curl -fLo ~/.vim/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+    - name: Install VIM plugins
+      shell:
+        cmd: vim -c -u ~/.vimrc +PlugInstall +qall
+
+
+- hosts: all
+  tags: system
   become: yes
   tasks:
     - name: Update and upgrade
       apt:
         upgrade: yes
 
-- hosts: all
-  become: yes
-  tasks:
     - name: Install Build Tools
-      apt:
-        name: build-essential
-        state: latest
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'build-essential', 'git' ]
 
     - name: Install ZSH
       apt:
@@ -37,36 +83,36 @@
       apt: name={{ item }} state=latest update_cache=yes
       loop: [ 'nodejs', 'yarn' ]
 
-    - name: Install aptitude using apt
-      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+        #    - name: Install aptitude using apt
+        #      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+        #
+        #    - name: Install required system packages
+        #      apt: name={{ item }} state=latest update_cache=yes
+        #      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common' ]
 
-    - name: Install required system packages
-      apt: name={{ item }} state=latest update_cache=yes
-      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common' ]
-
-    - name: Add Docker GPG apt Key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-
-    - name: Add Docker Repository
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu bionic stable
-        state: present
-
-    - name: Update apt and install docker-ce
-      apt: update_cache=yes name=docker-ce state=latest
-
-    - name: Add user to groups
-      user:
-        name: vagrant
-        groups: docker
+        #    - name: Add Docker GPG apt Key
+        #      apt_key:
+        #        url: https://download.docker.com/linux/ubuntu/gpg
+        #        state: present
+        #
+        #    - name: Add Docker Repository
+        #      apt_repository:
+        #        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        #        state: present
+        #
+        #    - name: Update apt and install docker-ce
+        #      apt: update_cache=yes name=docker-ce state=latest
+        #
+        #    - name: Add user to groups
+        #      user:
+        #        name: vagrant
+        #        groups: docker
 
 
 # User centric installs
 - hosts: all
-  become: yes
-  become_user: vagrant
+  tags: zsh
+  become: no
   tasks:
     - name: Install Oh-My-ZSH
       shell:
@@ -78,12 +124,11 @@
         cmd: git clone https://github.com/spaceship-prompt/spaceship-prompt.git ~/.oh-my-zsh/themes/spaceship-prompt --depth=1 && ln -s ~/.oh-my-zsh/themes/spaceship-prompt/spaceship.zsh-theme ~/.oh-my-zsh/themes/spaceship.zsh-theme
         creates: ~/.oh-my-zsh/themes/spaceship.zsh-theme
 
-    - name: Copy local .zshrc
-      copy:
-        force: yes
-        src: ~/.zshrc
-        dest: ~/.zshrc
 
+- hosts: all
+  tags: rust
+  become: no
+  tasks:
     - name: Install Rust
       expect:
         command: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -96,39 +141,6 @@
       shell:
         cmd: rustup component add rls rust-analysis rust-src
 
-    - name: Copy .vimrc
-      copy:
-        force: yes
-        src: ~/.vimrc
-        dest: ~/.vimrc
-
-    - name: Install VIM Plug
-      shell:
-        cmd: curl -fLo ~/.vim/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-    - name: Install VIM plugins
-      shell:
-        cmd: vim -c -u ~/.vimrc +PlugInstall +qall
-
           #    - name: Install Coc for VIM
           #      shell:
           #        cmd: vim -c CocInstall coc-rls
-
-- hosts: all
-  become: no
-  tasks:
-    - name: Add ls alias
-      lineinfile:
-        path: ~/.bash_aliases
-        line: alias l='ls -ltrp'
-        create: yes
-    - name: Add vim alias
-      lineinfile:
-        path: ~/.bash_aliases
-        line: alias v='vim'
-        create: yes
-    - name: Set vi
-      lineinfile:
-        path: ~/.bash_aliases
-        line: set -o vi
-        create: yes

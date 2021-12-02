@@ -1,3 +1,5 @@
+OS=`uname -s`
+
 # If you come from bash you might have to change your $PATH.
 export GOPATH=$HOME/go
 export GOBIN=$HOME/go/bin
@@ -16,7 +18,7 @@ SPACESHIP_HOST_SHOW=true
 SPACESHIP_HOST_SHOW_FULL=true
 SPACESHIP_VENV_SYMBOL="🐍 "
 SPACESHIP_VENV_GENERIC_NAMES="()"
-#SPACESHIP_PROMPT_FIRST_PREFIX_SHOW=true
+SPACESHIP_PROMPT_FIRST_PREFIX_SHOW=true
 #SPACESHIP_PROMPT_PREFIXES_SHOW=true
 #SPACESHIP_PROMPT_DEFAULT_PREFIX="╭─"
 #SPACESHIP_PROMPT_DEFAULT_SUFFIX="╭─"
@@ -164,7 +166,12 @@ alias nuke='cd src && git clean -xfd && cd .. && dotnet restore'
 alias paket='~/.dotnet/tools/paket'
 
 # AutoJump
-[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+if [ "$OS" = "Darwin" ]; then
+    [ -f /opt/homebrew/etc/profile.d/autojump.sh ] && . /opt/homebrew/etc/profile.d/autojump.sh
+else
+    [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+fi
+
 
 # Fuzzy Find FTW!!
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -178,11 +185,13 @@ alias paket='~/.dotnet/tools/paket'
 bindkey '^ ' autosuggest-accept
 
 # Auto activate Python VENVs
-if [[ -x ~/bin/virtualenv-autodetect.sh ]]; then
-    source ~/bin/virtualenv-autodetect.sh
-fi
+#if [[ -x ~/bin/virtualenv-autodetect.sh ]]; then
+#    source ~/bin/virtualenv-autodetect.sh
+#fi
 
 # Pyenv
+#if [[ -x /usr/local/bin/pyenv-virtualenv ]]; then
+#    eval "$(pyenv virtualenv-init -)"
 if [[ -x /usr/local/bin/pyenv ]]; then
     eval "$(pyenv init -)"
 fi
