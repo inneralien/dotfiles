@@ -102,6 +102,7 @@ plugins=(
   virtualenv
 )
 
+zstyle :omz:plugins:ssh-agent agent-forwarding yes
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
