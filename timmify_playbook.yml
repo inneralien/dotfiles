@@ -39,9 +39,21 @@
         src: vim/.vimrc
         dest: ~/.vimrc
 
+    - name: Create .vim/autoload directory to install vim Plug
+      file:
+        path: ~/.vim/autoload
+        state: directory
+
+    - name: Copy .gitconfig
+      copy:
+        force: yes
+        src: git/.gitconfig
+        dest: ~/.gitconfig
+
     - name: Install VIM Plug
-      shell:
-        cmd: curl -fLo ~/.vim/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      get_url:
+        url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        dest: ~/.vim/autoload/plug.vim
 
     - name: Install VIM plugins
       shell:
@@ -58,7 +70,7 @@
 
     - name: Install Build Tools
       apt: name={{ item }} state=latest update_cache=yes
-      loop: [ 'build-essential', 'git' ]
+      loop: [ 'build-essential', 'git', 'curl' ]
 
     - name: Install ZSH
       apt:
@@ -79,7 +91,7 @@
         update_cache: yes
         force_apt_get: yes
 
-    - name: Nodejs, neede for VIM COC
+    - name: Nodejs, needed for VIM COC
       apt: name={{ item }} state=latest update_cache=yes
       loop: [ 'nodejs', 'yarn' ]
 
@@ -114,16 +126,44 @@
   tags: zsh
   become: no
   tasks:
+    - name: Download Oh-My-ZSH install script
+      get_url:
+        url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        dest: /tmp/install.sh
+        mode: '0766'
+
     - name: Install Oh-My-ZSH
-      shell:
-        cmd: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      shell: yes | KEEP_ZSHRC=yes /bin/sh /tmp/install.sh
+      args:
         creates: ~/.oh-my-zsh
 
     - name: Install Spaceship for Oh-My-ZSH
-      shell:
-        cmd: git clone https://github.com/spaceship-prompt/spaceship-prompt.git ~/.oh-my-zsh/themes/spaceship-prompt --depth=1 && ln -s ~/.oh-my-zsh/themes/spaceship-prompt/spaceship.zsh-theme ~/.oh-my-zsh/themes/spaceship.zsh-theme
-        creates: ~/.oh-my-zsh/themes/spaceship.zsh-theme
+      git:
+        repo: https://github.com/spaceship-prompt/spaceship-prompt.git
+        depth: 1
+        dest:  ~/.oh-my-zsh/custom/themes/spaceship-prompt
 
+    - name: Link spaceship theme
+      file:
+        src: ~/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme
+        dest: ~/.oh-my-zsh/custom/themes/spaceship.zsh-theme
+        state: link
+
+    - name: Install ZSH auto suggestions
+      git:
+        repo: https://github.com/zsh-users/zsh-autosuggestions
+        dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+
+    - name: Create ~/bin directory
+      file:
+        name: ~/bin
+        state: directory
+
+    - name: Install virtualenv-autodetect into ~/bin/
+      get_url:
+        url: https://raw.githubusercontent.com/egilewski/virtualenv-autodetect/master/virtualenv-autodetect.sh
+        dest: ~/bin/virtualenv-autodetect.sh
+        mode: '0755'
 
 - hosts: all
   tags: rust

@@ -23,8 +23,8 @@ SPACESHIP_PROMPT_FIRST_PREFIX_SHOW=true
 #SPACESHIP_PROMPT_DEFAULT_PREFIX="╭─"
 #SPACESHIP_PROMPT_DEFAULT_SUFFIX="╭─"
 #SPACESHIP_CHAR_COLOR_SUCCESS=""
-#SPACESHIP_DIR_TRUNC=3
-SPACESHIP_DIR_TRUNC_PREFIX="…/"
+SPACESHIP_DIR_TRUNC=3
+#SPACESHIP_DIR_TRUNC_PREFIX="…/"
 SPACESHIP_DIR_PREFIX="╭─○ "
 #SPACESHIP_DIR_PREFIX="╭∊ "
 #SPACESHIP_DIR_PREFIX="╭🍄 "
@@ -35,7 +35,7 @@ SPACESHIP_CHAR_SYMBOL="𝝨 "
 #SPACESHIP_CHAR_SYMBOL="𝝣 "
 #SPACESHIP_CHAR_SYMBOL="→ "
 SPACESHIP_RUST_SHOW=true
-SPACESHIP_PROMPT_ORDER=(host dir venv git exec_time line_sep char)
+SPACESHIP_PROMPT_ORDER=(dir host venv git exec_time line_sep char)
 
 #ZSH_THEME="robbyrussell"
 #ZSH_THEME="amuse"
@@ -90,7 +90,7 @@ SPACESHIP_PROMPT_ORDER=(host dir venv git exec_time line_sep char)
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  cargo
+  rust
   docker
   docker-compose
   git
@@ -101,10 +101,11 @@ plugins=(
   #expand-aliases
   globalias
   #virtualenvwrapper
-  virtualenv
+  #virtualenv
 )
 
 zstyle :omz:plugins:ssh-agent agent-forwarding yes
+
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -122,7 +123,7 @@ source $ZSH/oh-my-zsh.sh
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
+export EDITOR='vim'
 # else
 #   export EDITOR='mvim'
 # fi
@@ -185,9 +186,9 @@ fi
 bindkey '^ ' autosuggest-accept
 
 # Auto activate Python VENVs
-#if [[ -x ~/bin/virtualenv-autodetect.sh ]]; then
-#    source ~/bin/virtualenv-autodetect.sh
-#fi
+if [[ -x ~/bin/virtualenv-autodetect.sh ]]; then
+    source ~/bin/virtualenv-autodetect.sh
+fi
 
 # Pyenv
 #if [[ -x /usr/local/bin/pyenv-virtualenv ]]; then
