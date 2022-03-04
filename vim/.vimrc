@@ -17,11 +17,10 @@ Plug 'airblade/vim-gitgutter'
 Plug 'chrisbra/unicode.vim'
 "Plug 'tpope/vim-dispatch'
 Plug 'armyofevilrobots/vim-openscad'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Rust Things
 Plug 'rust-lang/rust.vim'
 Plug 'cespare/vim-toml'
-" Conquer of Completion (VSCode LSP for vim)
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Racer
 "Plug 'racer-rust/vim-racer'
 " or LSP
@@ -71,7 +70,7 @@ set shortmess+=c
 " diagnostics appear/become resolved.
 if has("nvim-0.5.0") || has("patch-8.1.1564")
   " Recently vim can merge signcolumn and number column into one
-  set signcolumn=auto
+  set signcolumn=number
 else
   set signcolumn=yes
 endif
@@ -79,21 +78,11 @@ endif
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
-"inoremap <silent><expr> <TAB>
-"      \ pumvisible() ? "\<C-n>" :
-"      \ <SID>check_back_space() ? "\<TAB>" :
-"      \ coc#refresh()
-"inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-"
-"function! s:check_back_space() abort
-"  let col = col('.') - 1
-"  return !col || getline('.')[col - 1]  =~# '\s'
-"endfunction
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -105,6 +94,8 @@ let g:coc_snippet_next = '<tab>'
 " Use <c-space> to trigger completion.
 if has('nvim')
   inoremap <silent><expr> <c-space> coc#refresh()
+  " nvim maps Y to y$ by default
+  unmap Y
 else
   inoremap <silent><expr> <c-@> coc#refresh()
 endif
@@ -211,68 +202,7 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 nnoremap <F9> :CocDisable<CR>
 nnoremap <F10> :set nonu<CR>
 
-"" RACER
-"let g:racer_cmd = "/Users/tweaver/.cargo/bin/racer"
-""let g:racer_experimental_completer = 1
-""let g:racer_insert_paren = 1
-"au FileType rust nmap gd <Plug>(rust-def)
-"au FileType rust nmap gs <Plug>(rust-def-split)
-"au FileType rust nmap gx <Plug>(rust-def-vertical)
-"au FileType rust nmap <leader>gd <Plug>(rust-doc)
-
-" Use LSP instead of RACER
-" Rust Language Server for LSP
-"if executable('rls')
-"        au User lsp_setup call lsp#register_server({
-"                \ 'name': 'rls',
-"                \ 'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
-"                \ 'workspace_config': {'rust': {'clippy_preference': 'on'}},
-"                \ 'whitelist': ['rust'],
-"                \ })
-"endif
-"
-"function! s:on_lsp_buffer_enabled() abort
-"    setlocal omnifunc=lsp#complete
-"    setlocal signcolumn=yes
-"    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-"    nmap <buffer> gd <Plug>(lsp-definition)
-"    nmap <buffer> gs <Plug>(lsp-document-symbol-search)
-"    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
-"    nmap <buffer> gr <plug>(lsp-references)
-"    nmap <buffer> gi <plug>(lsp-implementation)
-"    nmap <buffer> gt <plug>(lsp-type-definition)
-"    nmap <buffer> <leader>rn <plug>(lsp-rename)
-"    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
-"    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
-"    nmap <buffer> K <plug>(lsp-hover)
-"
-"    let g:lsp_format_sync_timeout = 1000
-"    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
-"
-"    " refer to doc to add more commands
-"endfunction
-"
-"augroup lsp_install
-"    au!
-"    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
-"    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-"augroup END
-"
-"let g:lsp_highlight_references_enabled = 0
-"let g:lsp_diagnostics_echo_cursor = 1
-"let g:lsp_diagnostics_enabled = 1
-""let g:lsp_signs_error = {'text': '🦀'}
-"let g:lsp_signs_error = {'text': '✘ '}
-"let g:lsp_signs_warning = {'text': 'W>'}
-"let g:lsp_signs_information = {'text': 'I>'}
-"let g:lsp_signs_hint = {'text': 'H>'}
-"
-"" Enable logging to figure out LSP issues
-"let g:lsp_log_verbose = 1
-"let g:lsp_log_file = expand('~/vim-lsp.log')
-
-" for asyncomplete.vim log
-"let g:asyncomplete_log_file = expand('~/asyncomplete.log')
+" END COC
 
 "au CursorHold *.rs :LspHover<CR> set updatetime 1000
 
@@ -496,6 +426,8 @@ au BufRead,BufNewfile *.kit set filetype=yaml
 syntax enable
 "hi      SpecialKey  ctermfg=gray ctermbg=black guifg=DarkRed
 "hi      Directory   ctermfg=Brown	                        guifg=Brown
+"hi Comment ctermfg=246 ctermbg=NONE cterm=italic
+hi Comment ctermfg=240
 "hi      Comment	    ctermfg=darkgreen	                    guifg=darkgreen
 "hi      PreProc	    ctermfg=Brown		                    guifg=Brown
 ""hi    Constant	  ctermfg=LightRed
@@ -682,3 +614,5 @@ function! XTermPasteBegin()
   set paste
   return ""
 endfunction
+
+hi Comment ctermfg=240
