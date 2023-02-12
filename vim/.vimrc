@@ -110,7 +110,7 @@ let g:coc_snippet_next = '<tab>'
 if has('nvim')
   inoremap <silent><expr> <c-space> coc#refresh()
   " nvim maps Y to y$ by default
-  unmap Y
+  silent! unmap Y
 else
   inoremap <silent><expr> <c-@> coc#refresh()
 endif
