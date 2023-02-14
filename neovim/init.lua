@@ -177,6 +177,28 @@ require('lualine').setup {
     component_separators = '|',
     section_separators = '',
   },
+  sections = {
+    lualine_a = {
+      {
+        'mode', fmt = function(str) return str:sub(1,1) end
+      }
+    },
+    lualine_b = {
+      {
+        icons_enabled = true,
+        'branch',
+        icon = ''
+      },
+    },
+    lualine_c = {
+      {
+        'filename',
+        file_status = true,
+        path = 3,
+        shorting_target = 40,
+      }
+    }
+  }
 }
 
 -- Enable Comment.nvim
