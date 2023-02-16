@@ -51,6 +51,8 @@ require('packer').startup(function(use)
     end,
   }
 
+  use('mbbill/undotree')
+
   use { -- Additional text objects via treesitter
     'nvim-treesitter/nvim-treesitter-textobjects',
     after = 'nvim-treesitter',
@@ -108,8 +110,15 @@ vim.api.nvim_create_autocmd('BufWritePost', {
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
+-- Do *not* wrap lines by default
+vim.o.wrap = false
+
+-- Always smart indent
+vim.o.smartindent = true
+
 -- Set highlight on search
 vim.o.hlsearch = false
+vim.o.incsearch = true
 
 -- Make line numbers default
 vim.wo.number = true
@@ -121,6 +130,9 @@ vim.o.mouse = 'a'
 vim.o.breakindent = true
 
 -- Save undo history
+vim.o.swapfile = false
+vim.o.backup = false
+vim.o.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.o.undofile = true
 
 -- Case insensitive searching UNLESS /C or capital in search
@@ -147,6 +159,9 @@ vim.o.completeopt = 'menuone,noselect'
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = ','
 vim.g.maplocalleader = ','
+
+-- Undotree mappings
+vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
