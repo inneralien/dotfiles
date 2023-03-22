@@ -205,11 +205,15 @@ require('lualine').setup {
         icon = ''
       },
     },
-    lualine_c = {
+    lualine_c = { function()
+      return vim.fn.getcwd() .. "/"
+    end
+    },
+    lualine_x = {
       {
         'filename',
         file_status = true,
-        path = 3,
+        path = 1,
         shorting_target = 40,
       }
     }
