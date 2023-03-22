@@ -142,8 +142,11 @@ export EDITOR='vim'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias l='ls -ltrp'
-alias la='ls -altrp'
+#alias l='ls -ltrp'
+#alias la='ls -altrp'
+alias l='exa --long --git -snew -F'
+GLOBALIAS_FILTER_VALUES=(l)
+alias la='exa --long --git -a -snew -F'
 alias v='vim'
 alias miniterm='miniterm.py --raw --eol=lf'
 alias mt='miniterm /dev/tty.usbserial 115200'
