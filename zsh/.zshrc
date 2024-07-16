@@ -3,7 +3,7 @@ OS=`uname -s`
 # If you come from bash you might have to change your $PATH.
 export GOPATH=$HOME/go
 export GOBIN=$HOME/go/bin
-export PATH=$HOME/bin:/usr/local/bin:/usr/local/lib/ruby/gems/2.6.0/bin:$GOBIN:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
@@ -23,8 +23,8 @@ SPACESHIP_PROMPT_FIRST_PREFIX_SHOW=true
 #SPACESHIP_PROMPT_DEFAULT_PREFIX="╭─"
 #SPACESHIP_PROMPT_DEFAULT_SUFFIX="╭─"
 #SPACESHIP_CHAR_COLOR_SUCCESS=""
-SPACESHIP_DIR_TRUNC=3
-#SPACESHIP_DIR_TRUNC_PREFIX="…/"
+#SPACESHIP_DIR_TRUNC=3
+SPACESHIP_DIR_TRUNC_PREFIX="…/"
 SPACESHIP_DIR_PREFIX="╭─○ "
 #SPACESHIP_DIR_PREFIX="╭∊ "
 #SPACESHIP_DIR_PREFIX="╭🍄 "
@@ -96,15 +96,30 @@ plugins=(
   git
   vi-mode
   zsh-autosuggestions
-  ssh-agent
+  #ssh-agent
   #virtualbox
   #expand-aliases
   globalias
   #virtualenvwrapper
-  #virtualenv
+  virtualenv
 )
 
 zstyle :omz:plugins:ssh-agent agent-forwarding yes
+zstyle :omz:plugins:ssh-agent lazy
+
+# Justfile completion
+# Init Homebrew, which adds environment variables
+# eval "$(brew shellenv)"
+
+# fpath=($HOMEBREW_PREFIX/share/zsh/site-functions $fpath)
+
+# Then choose one of these options:
+# 1. If you're using Oh My Zsh, you can initialize it here
+# source $ZSH/oh-my-zsh.sh
+
+# 2. Otherwise, run compinit yourself
+# autoload -U compinit
+# compinit
 
 source $ZSH/oh-my-zsh.sh
 
@@ -113,6 +128,17 @@ source $ZSH/oh-my-zsh.sh
 # Don't share command history between terminals
 #unsetopt inc_append_history
 #unsetopt share_history
+setopt EXTENDED_HISTORY      # Write the history file in the ':start:elapsed;command' format.
+setopt INC_APPEND_HISTORY    # Write to the history file immediately, not when the shell exits.
+setopt SHARE_HISTORY         # Share history between all sessions.
+setopt HIST_IGNORE_DUPS      # Do not record an event that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS  # Delete an old recorded event if a new event is a duplicate.
+setopt HIST_IGNORE_SPACE     # Do not record an event starting with a space.
+setopt HIST_SAVE_NO_DUPS     # Do not write a duplicate event to the history file.
+setopt HIST_VERIFY           # Do not execute immediately upon history expansion.
+setopt APPEND_HISTORY        # append to history file (Default)
+setopt HIST_NO_STORE         # Don't store history commands
+setopt HIST_REDUCE_BLANKS    # Remove superfluous blanks from each command line being added to the history.
 
 #source $HOME/bin/virtualenv-autodetect.sh
 
@@ -122,11 +148,11 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+if [[ -n $SSH_CONNECTION ]]; then
+   export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -143,38 +169,54 @@ export EDITOR='vim'
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 #alias l='ls -ltrp'
+alias eza='eza -F'
+alias l='eza --long -snew'
+alias la='eza --long --git -a -snew'
 #alias la='ls -altrp'
-alias l='exa --long --git -snew -F'
-GLOBALIAS_FILTER_VALUES=(l)
-alias la='exa --long --git -a -snew -F'
-alias v='vim'
+alias v='nvim'
+#alias nv='nvim'
 alias miniterm='miniterm.py --raw --eol=lf'
 alias mt='miniterm /dev/tty.usbserial 115200'
 alias javar='/Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java'
 # alias gitla='git log --all --pretty --graph --oneline'
 alias gitla='git log --pretty --graph --oneline --all'
 alias gitl='git log --pretty --graph --oneline'
+alias nv='/Applications/Neovide.app/Contents/MacOS/neovide --multigrid --notabs'
+GLOBALIAS_FILTER_VALUES=(l la nv)
 
 # Disable shell integration because it doesn't work properly with TMux
-# test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# Project Aliases
+# .net Project Aliases
 
-alias updev='CURBRANCH=`git rev-parse --abbrev-ref HEAD`; git checkout develop; git pull origin develop; git checkout $CURBRANCH'
-alias rpkg='~/.dotnet/tools/paket restore; dotnet restore'
-alias uppkg='~/.dotnet/tools/paket update; dotnet restore'
-alias ipkg='~/.dotnet/tools/paket install; dotnet restore'
-alias b='dotnet build'
-alias bf21='dotnet build --framework netcoreapp2.1'
-alias nuke='cd src && git clean -xfd && cd .. && dotnet restore'
-alias paket='~/.dotnet/tools/paket'
+#alias updev='CURBRANCH=`git rev-parse --abbrev-ref HEAD`; git checkout develop; git pull origin develop; git checkout $CURBRANCH'
+#alias rpkg='~/.dotnet/tools/paket restore; dotnet restore'
+#alias uppkg='~/.dotnet/tools/paket update; dotnet restore'
+#alias ipkg='~/.dotnet/tools/paket install; dotnet restore'
+#alias b='dotnet build'
+#alias bf21='dotnet build --framework netcoreapp2.1'
+#alias nuke='cd src && git clean -xfd && cd .. && dotnet restore'
+#alias paket='~/.dotnet/tools/paket'
+
+# Apalache Aliases
+###### using the latest stable
+
+#alias apalache='docker run --rm -v $(pwd):/var/apalache ghcr.io/informalsystems/apalache'
+
+###### using the latest main
+
+#alias apalache_latest='docker run --rm -v $(pwd):/var/apalache ghcr.io/informalsystems/apalache:main'
+
+# TLA+ Toolbox
+#alias tlc="java -jar /Applications/TLA+\ Toolbox.app/Contents/Eclipse/tla2tools.jar"
+
 
 # AutoJump
-if [ "$OS" = "Darwin" ]; then
-    [ -f /opt/homebrew/etc/profile.d/autojump.sh ] && . /opt/homebrew/etc/profile.d/autojump.sh
-else
-    [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
-fi
+#if [ "$OS" = "Darwin" ]; then
+#    [ -f /opt/homebrew/etc/profile.d/autojump.sh ] && . /opt/homebrew/etc/profile.d/autojump.sh
+#else
+#    [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+#fi
 
 
 # Fuzzy Find FTW!!
@@ -189,13 +231,16 @@ fi
 bindkey '^ ' autosuggest-accept
 
 # Auto activate Python VENVs
-if [[ -x ~/bin/virtualenv-autodetect.sh ]]; then
-    source ~/bin/virtualenv-autodetect.sh
-fi
+#if [[ -x ~/bin/virtualenv-autodetect.sh ]]; then
+#    source ~/bin/virtualenv-autodetect.sh
+#fi
 
 # Pyenv
-#if [[ -x /usr/local/bin/pyenv-virtualenv ]]; then
-#    eval "$(pyenv virtualenv-init -)"
-if [[ -x /usr/local/bin/pyenv ]]; then
-    eval "$(pyenv init -)"
-fi
+#if which pyenv-virtualenv-init > /dev/null; then
+#    eval "$(pyenv virtualenv-init -)";
+#fi
+#
+#if which pyenv > /dev/null; then
+#    eval "$(pyenv init -)";
+#fi
+
