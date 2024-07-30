@@ -1,0 +1,8 @@
+import = ["~/.config/alacritty/nightfox.toml"]
+
+[font]
+normal = { family = "VictorMono Nerd Font", style = "Regular" }
+size = 14
+
+[mouse]
+hide_when_typing = true
